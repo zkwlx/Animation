@@ -1,0 +1,24 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.zkw.drawCore.DisplayLayer
+        android:id="@+id/main_display_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.zkw.drawCore.PaintingLayer
+        android:id="@+id/main_painting_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/main_make_gif_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:text="to gif" />
+
+</RelativeLayout>
