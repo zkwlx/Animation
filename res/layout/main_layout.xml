@@ -3,22 +3,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <com.zkw.drawCore.DisplayLayer
-        android:id="@+id/main_display_layer"
+    <com.zkw.drawCore.PaintingSurface
+        android:id="@+id/main_surface_layer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <com.zkw.drawCore.PaintingLayer
-        android:id="@+id/main_painting_layer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@android:color/white" />
 
     <Button
-        android:id="@+id/main_make_gif_btn"
+        android:id="@+id/main_play_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:onClick="onPlayClick"
+        android:text="play" />
+
+    <Button
+        android:id="@+id/main_eraser_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="to gif" />
+        android:layout_alignParentRight="true"
+        android:onClick="onEraserClick"
+        android:text="ca" />
+
+    <Button
+        android:id="@+id/main_painting_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:onClick="onPaintingClick"
+        android:text="bi" />
+
+    <Button
+        android:id="@+id/main_next_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="onNextClick"
+        android:text="->" />
+
+    <com.zkw.playCore.PlaySurface
+        android:id="@+id/main_play_surface_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:visibility="gone" />
 
 </RelativeLayout>

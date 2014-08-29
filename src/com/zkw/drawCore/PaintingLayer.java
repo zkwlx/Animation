@@ -1,6 +1,7 @@
 package com.zkw.drawCore;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -21,6 +22,8 @@ public class PaintingLayer extends View {
     private final Path mPath = new Path();
 
     private final Path mDispathPath = new Path();
+
+    private Dispatchable mDispatcher;
 
     private Paint mLocalPaint;
 
@@ -47,8 +50,23 @@ public class PaintingLayer extends View {
         this.init();
     }
 
+    public void clear() {
+        this.mPath.reset();
+        this.invalidate();
+    }
+
     public void onRelease() {
         this.mPath.reset();
+    }
+
+    public void setDispatcher(Dispatchable dispatcher) {
+        this.mDispatcher = dispatcher;
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        canvas.drawPath(this.mPath, this.mLocalPaint);
     }
 
     @Override
@@ -63,7 +81,7 @@ public class PaintingLayer extends View {
             this.onActionMove(event);
             break;
         case MotionEvent.ACTION_UP:
-            this.onActionUp(event);
+            this.onActionUp(event.getX(), event.getY());
             break;
         }
 
@@ -86,9 +104,22 @@ public class PaintingLayer extends View {
     }
 
     private void onActionMove(MotionEvent event) {
+
+        // 当性能低，画很多线时，需要这个来使画线更平滑
+        for (int i = 0; i < event.getHistorySize(); i++) {
+            float ex = event.getHistoricalX(0, i);
+            float ey = event.getHistoricalY(0, i);
+            this.onMove(ex, ey);
+        }
+
         float x = event.getX();
         float y = event.getY();
 
+        this.onMove(x, y);
+
+    }
+
+    private void onMove(float x, float y) {
         // TODO 这里可以根据移动速度动态计算间隔距离
         float dx = Math.abs(x - this.tempX);
         float dy = Math.abs(y - this.tempY);
@@ -102,22 +133,21 @@ public class PaintingLayer extends View {
             this.tempY = y;
         }
 
-        if ((currentTime - this.startPathTime) > INTERVAL_PATH_TIME
-                && isInInterval) {
-            this.onActionUp(event);
-            this.mPath.moveTo(x, y);
-            this.startPathTime = System.currentTimeMillis();
-        }
+        // if ((currentTime - this.startPathTime) > INTERVAL_PATH_TIME
+        // && isInInterval) {
+        // this.onActionUp(x, y);
+        // this.mPath.moveTo(x, y);
+        // this.startPathTime = System.currentTimeMillis();
+        // }
     }
 
-    private void onActionUp(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
-
+    private void onActionUp(float x, float y) {
         this.mPath.lineTo(x, y);
 
-        // TODO 将这个path发送给展示层
         this.mDispathPath.set(this.mPath);
+        if (this.mDispatcher != null) {
+            this.mDispatcher.dispatchDraw(this.mDispathPath, this.mLocalPaint);
+        }
 
         this.mPath.rewind();
 
@@ -161,8 +191,8 @@ public class PaintingLayer extends View {
         this.mLocalPaint.setStyle(Paint.Style.STROKE);
         this.mLocalPaint.setStrokeJoin(Paint.Join.ROUND);
         this.mLocalPaint.setStrokeCap(Paint.Cap.ROUND);
-        this.mLocalPaint.setShadowLayer(2f, 1, 1, Color.GRAY);
-        this.mLocalPaint.setStrokeWidth(3);
+        // this.mLocalPaint.setShadowLayer(2f, 1, 1, Color.GRAY);
+        this.mLocalPaint.setStrokeWidth(9);
     }
 
 }
